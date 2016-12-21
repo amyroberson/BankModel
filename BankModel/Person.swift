@@ -8,19 +8,24 @@
 
 import Foundation
 
-class Person: JSONSerialization {
+public class Person {
     let firstName : String
     let lastName: String
     let email: String
+    let dictonary: [String: Any] = [
+        "firstName": "Amy",
+        "lastName": "Roberson",
+        "email": "amy@roberson.xyz"
+    ]
     
-    init(firstName: String, lastName: String, email: String) {
+    public init(firstName: String, lastName: String, email: String) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
     }
 }
 
-class Individual: Person, Equatable{
+class Individual: Person, Equatable {
     let accounts: [BankAccount]
     let employee: Bool
     
@@ -45,4 +50,17 @@ class Individual: Person, Equatable{
         lhs.email == rhs.email &&
         lhs.accounts == rhs.accounts
     }
+    
+    func toDictionary() -> [String : Any] {
+        let dictionary: [String : Any] = [
+            "firstName" : self.firstName,
+            "lastName" : self.lastName,
+            "email" : self.email,
+            "accounts" : self.accounts.map{ $0.toDictionary() },
+            "employee" : self.employee,
+        ]
+        return dictionary
+    }
+    
+    
 }

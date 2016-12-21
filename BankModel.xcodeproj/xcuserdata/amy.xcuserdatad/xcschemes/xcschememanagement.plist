@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>BankDriver.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>BankModel.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -18,6 +23,11 @@
 			<true/>
 		</dict>
 		<key>E10FEF301E09B633002C4004</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E1CDC9901E0A29AD00B9AF18</key>
 		<dict>
 			<key>primary</key>
 			<true/>

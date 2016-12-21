@@ -8,22 +8,30 @@
 
 import Foundation
 
-enum AccountType{
-    case saving
-    case checking
+enum AccountType: Int{
+    case saving = 0
+    case checking = 1
+    
 }
 
-enum AmountError : Error{
+enum AmountError : Error{ //backing type for an enum so it can work with type ANY
     case notEnoughInAccount
     case notAReasonableAmount
 }
 
-public struct BankAccount: Equatable {
+class BankAccount: Equatable{
     var balance: Double
     let accountID: Int
     let accountType: AccountType
     
-    public mutating func withdraw(amount: Double) throws {
+    
+    init(balance: Double, accountID: Int, accountType: AccountType){
+        self.balance = balance
+        self.accountID = accountID
+        self.accountType = accountType
+    }
+    
+    func withdraw(amount: Double) throws {
         guard amount > -1 else{
             throw AmountError.notAReasonableAmount
         }
@@ -34,16 +42,24 @@ public struct BankAccount: Equatable {
         }
     }
     
-    public mutating func deposit(amount: Double) throws {
+    func deposit(amount: Double) throws {
         guard amount > -1 else{
             throw AmountError.notAReasonableAmount
         }
         self.balance += amount
     }
     
-    public static func ==(_ lhs: BankAccount, _ rhs: BankAccount) -> Bool {
+    static func ==(_ lhs: BankAccount, _ rhs: BankAccount) -> Bool {
         return lhs.balance == rhs.balance &&
         lhs.accountID == rhs.accountID &&
         lhs.accountType == rhs.accountType
+    }
+    
+    func toDictionary() -> [String: Any] {
+        let dictionary: [String: Any] = [
+            "balance" : self.balance,
+            "accountID": self.accountID,
+            "accountType": self.accountType]
+        return dictionary
     }
 }

@@ -8,7 +8,9 @@
 
 import Foundation
 
-class Bank : JSONSerialization {
+
+
+class Bank : Equatable {
     var employees: [Individual]
     var customers: [Individual]
     var address: String
@@ -28,13 +30,25 @@ class Bank : JSONSerialization {
         self.address = address
     }
     
+    init?(json: Data) {
+        do{
+            guard let jsonObject = try JSONSerialization.jsonObject(with:json, options: []) as? [String: Any] else {
+                return nil
+            }
+            self.employees = jsonObject["employees"] as? [Individual] ?? []
+            self.customers = jsonObject["customers"] as? [Individual] ?? []
+            self.address = jsonObject["address"] as? String ?? ""
+        } catch {
+            return nil
+        }
+    }
     
     
     func addNewCustomer(new: Individual){
         customers.append(new)
     }
     
-    func bankAccountTotals() -> Double{
+   func bankAccountTotals() -> Double{
         var total = 0.0
         for account in accounts{
             total += account.balance
@@ -48,4 +62,20 @@ class Bank : JSONSerialization {
             lhs.employees == rhs.employees &&
             lhs.address == rhs.address
     }
+    
+    func toDictionary() -> [String: Any] {
+        let dictionary: [String : Any] = [
+            "employees": self.employees.map{ $0.toDictionary() },
+            "customers": self.employees.map{ $0.toDictionary() },
+            "address": self.address,
+            "accounts": self.accounts.map{ $0.toDictionary() }
+        ]
+        return dictionary
+    }
+    
+    func toJSON() throws -> Data {
+        let jsonRepresentation = try JSONSerialization.data(withJSONObject: self.toDictionary(), options: [])
+        return jsonRepresentation
+    }
+    
 }
