@@ -14,7 +14,7 @@ enum AccountType: Int{
     
 }
 
-enum AmountError : Error{ //backing type for an enum so it can work with type ANY
+enum AmountError : Error{
     case notEnoughInAccount
     case notAReasonableAmount
 }
@@ -23,12 +23,31 @@ class BankAccount: Equatable{
     var balance: Double
     let accountID: Int
     let accountType: AccountType
+    var transactionList: [Transaction]
     
     
-    init(balance: Double, accountID: Int, accountType: AccountType){
+    init(balance: Double, accountID: Int, accountType: AccountType, transactionList: [Transaction]){
         self.balance = balance
         self.accountID = accountID
         self.accountType = accountType
+        self.transactionList = transactionList
+    }
+    
+    init?(dictionary: [String: Any]){
+        self.balance = dictionary["balance"] as? Double ?? 0.0
+        guard let x = dictionary["accountID"] as? Int else { return nil }
+        self.accountID = x
+        self.accountType = dictionary["accountType"] as? AccountType ?? .saving
+        if let tmp = dictionary["transactionList"] as? [[String:Any]] {
+            self.transactionList = []
+            for dictionary in tmp {
+                if let tmpTransaction = Transaction(dictionary: dictionary){
+                    self.transactionList.append(tmpTransaction)
+                }
+            }
+        } else {
+            self.transactionList = []
+        }
     }
     
     func withdraw(amount: Double) throws {
@@ -59,7 +78,45 @@ class BankAccount: Equatable{
         let dictionary: [String: Any] = [
             "balance" : self.balance,
             "accountID": self.accountID,
-            "accountType": self.accountType]
+            "accountType": self.accountType,
+            "transactionList": self.transactionList.map{ $0.toDictionary() }
+        ]
         return dictionary
     }
+    
+    func addTransaction(_ item: Transaction){
+        self.transactionList.append(item)
+    }
+    
+    func runningTotal()-> [(Transaction, Double)]{
+        var array: [(Transaction,Double)] = []
+        for i in self.transactionList{
+            if i.operation == .withdraw{
+                do{
+                    try self.withdraw(amount: i.amount)
+                } catch {
+                print("\(error)")
+                }
+                let newTuple = (i,self.balance)
+                array.append(newTuple)
+            }else {
+                do{
+                    try self.deposit(amount: i.amount)
+                } catch {
+                    print("\(error)")
+                }
+                let newTuple = (i,self.balance)
+                array.append(newTuple)
+            }
+        }
+        return array
+    }
+}
+
+class CheckingAccount: BankAccount {
+    
+}
+
+class SavingsAccount: BankAccount{
+    
 }

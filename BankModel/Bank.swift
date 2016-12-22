@@ -15,13 +15,13 @@ class Bank : Equatable {
     var customers: [Individual]
     var address: String
     var accounts: [BankAccount] { //look up flatmap to clean this up
-        var totalAccounts: [BankAccount] = []
+        var total: [BankAccount] = []
         for customer in customers{
             for account in customer.accounts{
-                totalAccounts.append(account)
+                total.append(account)
             }
         }
-        return totalAccounts
+        return total
     }
     
     init(address: String){
@@ -35,8 +35,27 @@ class Bank : Equatable {
             guard let jsonObject = try JSONSerialization.jsonObject(with:json, options: []) as? [String: Any] else {
                 return nil
             }
-            self.employees = jsonObject["employees"] as? [Individual] ?? []
-            self.customers = jsonObject["customers"] as? [Individual] ?? []
+            if let tmp = jsonObject["employees"] as? [[String: Any]] {
+                self.employees = []
+                for dictionary in tmp{
+                    if let tmpIndividual = Individual(dictionary: dictionary) {
+                        self.employees.append(tmpIndividual)
+                    }
+                }
+            } else {
+                self.employees = []
+            }
+            
+            if let tmp = jsonObject["customers"] as? [[String: Any]] {
+                self.customers = []
+                for dictionary in tmp {
+                    if let tmpCustomer = Individual(dictionary: dictionary) {
+                        self.customers.append(tmpCustomer)
+                    }
+                }
+            } else {
+                self.customers = []
+            }
             self.address = jsonObject["address"] as? String ?? ""
         } catch {
             return nil
@@ -52,7 +71,7 @@ class Bank : Equatable {
         var total = 0.0
         for account in accounts{
             total += account.balance
-        }
+    }
         return total
     }
     
@@ -64,9 +83,10 @@ class Bank : Equatable {
     }
     
     func toDictionary() -> [String: Any] {
+        
         let dictionary: [String : Any] = [
             "employees": self.employees.map{ $0.toDictionary() },
-            "customers": self.employees.map{ $0.toDictionary() },
+            "customers": self.customers.map{ $0.toDictionary() },
             "address": self.address,
             "accounts": self.accounts.map{ $0.toDictionary() }
         ]

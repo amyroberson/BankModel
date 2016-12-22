@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E102EE081E0B0F5700267FA1 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E102EE071E0B0F5700267FA1 /* Transaction.swift */; };
 		E10FEF321E09B633002C4004 /* BankModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E10FEF281E09B633002C4004 /* BankModel.framework */; };
 		E10FEF371E09B633002C4004 /* BankModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10FEF361E09B633002C4004 /* BankModelTests.swift */; };
 		E10FEF391E09B633002C4004 /* BankModel.h in Headers */ = {isa = PBXBuildFile; fileRef = E10FEF2B1E09B633002C4004 /* BankModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -47,6 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E102EE071E0B0F5700267FA1 /* Transaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		E10FEF281E09B633002C4004 /* BankModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BankModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E10FEF2B1E09B633002C4004 /* BankModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BankModel.h; sourceTree = "<group>"; };
 		E10FEF2C1E09B633002C4004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				E10FEF2C1E09B633002C4004 /* Info.plist */,
 				E1CDC98B1E09CBB800B9AF18 /* Bank.swift */,
 				E10FEF441E09B92A002C4004 /* Account.swift */,
+				E102EE071E0B0F5700267FA1 /* Transaction.swift */,
 				E10FEF421E09B64E002C4004 /* Person.swift */,
 			);
 			path = BankModel;
@@ -275,6 +278,7 @@
 			files = (
 				E1CDC98C1E09CBB800B9AF18 /* Bank.swift in Sources */,
 				E10FEF431E09B64E002C4004 /* Person.swift in Sources */,
+				E102EE081E0B0F5700267FA1 /* Transaction.swift in Sources */,
 				E10FEF451E09B92A002C4004 /* Account.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -535,6 +539,7 @@
 				E1CDC9961E0A29AD00B9AF18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

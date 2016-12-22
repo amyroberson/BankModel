@@ -12,30 +12,47 @@ public class Person {
     let firstName : String
     let lastName: String
     let email: String
-    let dictonary: [String: Any] = [
-        "firstName": "Amy",
-        "lastName": "Roberson",
-        "email": "amy@roberson.xyz"
-    ]
+    let employee: Bool
+  
     
-    public init(firstName: String, lastName: String, email: String) {
+    public init(firstName: String, lastName: String, email: String, isEmployee: Bool) {
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
+        self.employee = isEmployee
+    }
+    
+    init?(dictionary: [String: Any]){
+        self.firstName = dictionary["firstName"] as? String ?? ""
+        self.lastName = dictionary["lastName"] as? String ?? ""
+        self.email = dictionary["email"] as? String ?? ""
+        self.employee = dictionary["employee"] as? Bool ?? false
     }
 }
 
 class Individual: Person, Equatable {
-    let accounts: [BankAccount]
-    let employee: Bool
+    var accounts: [BankAccount]
     
     init(firstName: String, lastName: String, email: String, isEmploy: Bool, accounts: [BankAccount]){
-        self.employee = isEmploy
         self.accounts = accounts
-        super.init(firstName: firstName, lastName: lastName, email: email)
+        super.init(firstName: firstName, lastName: lastName, email: email, isEmployee: isEmploy)
     }
     
-    func totalAccountSum() -> Double {
+    override init?(dictionary: [String: Any]){
+        if let tmp = dictionary["accounts"] as? [[String: Any]] {
+            self.accounts = []
+            for dictionary in tmp {
+                if let tmpAccount = BankAccount(dictionary: dictionary){
+                    self.accounts.append(tmpAccount)
+                }
+            }
+        } else {
+            self.accounts = []
+        }
+        super.init(dictionary: dictionary)
+    }
+    
+   func totalAccountSum() -> Double {
         var total = 0.0
         for i in self.accounts{
             total += i.balance
@@ -60,6 +77,27 @@ class Individual: Person, Equatable {
             "employee" : self.employee,
         ]
         return dictionary
+    }
+    
+    func allCheckingAccounts() -> [CheckingAccount] {
+        var checking: [CheckingAccount] = []
+        for i in self.accounts {
+            if i.accountType == .checking {
+                checking.append(i as! CheckingAccount) // is a force unwrap ok here?
+            }
+        }
+        return checking
+    }
+    
+    
+    func allSavingsAccounts() -> [SavingsAccount] {
+        var savings: [SavingsAccount] = []
+        for i in self.accounts {
+            if i.accountType == .saving{
+                savings.append(i as! SavingsAccount) // is a force unwrap ok here?
+            }
+        }
+        return savings
     }
     
     
