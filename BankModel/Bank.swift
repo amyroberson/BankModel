@@ -88,7 +88,7 @@ class Bank : Equatable {
             "employees": self.employees.map{ $0.toDictionary() },
             "customers": self.customers.map{ $0.toDictionary() },
             "address": self.address,
-            "accounts": self.accounts.map{ $0.toDictionary() }
+            "accounts": self.accounts.map{ $0.toDictionary() } // this could be the thing that is failing
         ]
         return dictionary
     }

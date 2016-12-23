@@ -8,6 +8,10 @@
 
 import Foundation
 
+enum DateError: Error {
+    case dateParserError
+}
+
 enum TransactionOperation: Int {
     case withdraw = -1
     case deposit = 1
@@ -33,11 +37,10 @@ struct Transaction: Equatable {
         self.amount = dictionary["amount"] as? Double ?? 0.0
         self.operation = dictionary["operation"] as? TransactionOperation ?? .deposit
         self.vendorName = dictionary["vendorName"] as? String ?? ""
+        //need some dos
         self.datePosted = dictionary["datePosted"] as? Date ?? Date()
         self.dateCreated = dictionary["dateCreated"] as? Date ?? Date()
         self.memo = dictionary["memo"] as? String? ?? nil
-        
-        
     }
     
     func toDictionary() -> [String: Any] {
@@ -45,8 +48,8 @@ struct Transaction: Equatable {
             "amount": self.amount,
             "operation": self.operation.rawValue,
             "vendorName": self.vendorName,
-            "datePosted": self.datePosted,
-            "dateCreated": self.dateCreated,
+            "datePosted": self.datePosted.toString(),
+            "dateCreated": self.dateCreated.toString(),
             "memo": self.memo
             ]
         return dictionary
@@ -60,4 +63,5 @@ struct Transaction: Equatable {
             lhs.dateCreated == rhs.dateCreated &&
             lhs.memo == rhs.memo
     }
+
 }

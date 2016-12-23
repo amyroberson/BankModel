@@ -98,7 +98,62 @@ class BankModelTests: XCTestCase {
         XCTAssertEqual(firstResult.0, firstExpected.0)
         XCTAssertEqual(secondResult.0, secondExpected.0)
         XCTAssertEqual(thirdResult.0, thirdExpected.0)
+    }
+    
+    func testToDictionary(){
+        let account1 = SavingsAccount(balance: 100, accountID: 0, accountType: .saving, transactionList: [])
+        let dictionary = account1.toDictionary()
+        let expected: [String: Any] = [
+            "balance": 100,
+            "accountID": 0,
+            "accountType": 0,
+            "transactionList": []
+        ]
+        if let dictionary1 = (dictionary["balance"] as? Double),
+            let expected1 = (expected["balance"] as? Double),
+            let dictionary2 = (dictionary["transactionList"]) as? [Transaction],
+            let expected2 = (expected["transactionList"]) as? [Transaction] {
+            XCTAssertEqual(dictionary1, expected1)
+            XCTAssertEqual(dictionary2, expected2)
+            XCTAssertEqual(dictionary["accountId"] as? Int, expected["accountID"] as? Int)
+        }
+    }
+    
+    func testINIT(){
+        let dictionary: [String: Any] = [
+            "balance": 100.0,
+            "accountID": 10,
+            "accountType": "savings",
+            "transactionList": []
+        ]
         
+        if let newAccount = SavingsAccount(dictionary: dictionary) {
+                XCTAssertEqual(100, newAccount.balance)
+                XCTAssertEqual(10, newAccount.accountID)
+                XCTAssertEqual(AccountType.saving, newAccount.accountType)
+                XCTAssertEqual([], newAccount.transactionList)
+        } else {
+            XCTAssert(false)
+        }
+    }
+    
+    func testINIT2(){
+        let dictionary: [String: Any] = [
+            "balance": 100.0,
+            "accountID": 0,
+            "accountType": "checking",
+            "transactionList": []
+        ]
+        
+        if let newAccount = CheckingAccount(dictionary: dictionary) {
+            
+                XCTAssertEqual(100, newAccount.balance)
+                XCTAssertEqual(.checking, newAccount.accountType)
+                XCTAssertEqual(0, newAccount.accountID)
+                XCTAssertEqual([], newAccount.transactionList)
+        } else {
+            XCTAssert(false)
+        }
     }
     
     //MARK: Person and subclass tests
@@ -167,6 +222,53 @@ class BankModelTests: XCTestCase {
         XCTAssertEqual(result, expected)
     }
     
+    func testPersonINIT(){
+        let dictionary: [String: Any] = [
+            "firstName" : "Bob",
+            "lastName": "smith",
+            "email": "b@s.com",
+             "employee": false,
+             "accounts" : [] // test with accounts as well
+        ]
+        
+        let newIndividual = Individual(dictionary: dictionary)
+        XCTAssert((newIndividual?.employee) == (dictionary["employee"] as? Bool))
+        XCTAssert((newIndividual?.email) == (dictionary["email"] as? String))
+        XCTAssert((newIndividual?.lastName) == (dictionary["lastName"] as? String))
+        XCTAssert((newIndividual?.firstName) == (dictionary["firstName"] as? String))
+        
+        let actual: [BankAccount] = newIndividual?.accounts ?? []
+        let expected: [BankAccount] = dictionary["accounts"] as! [BankAccount]
+        XCTAssert(actual == expected)
+    }
+    
+    func testPersonINIT2(){
+        let account1 = SavingsAccount(balance: 100, accountID: 0, accountType: .saving, transactionList: [])
+        let account2 = CheckingAccount(balance: 5, accountID: 1, accountType: .checking, transactionList: [])
+        let dictionary: [String: Any] = [
+            "firstName" : "Bob",
+            "lastName": "smith",
+            "email": "b@s.com",
+            "employee": false,
+            "accounts" : [account1.toDictionary(), account2.toDictionary()]
+        ]
+        
+        let newIndividual = Individual(dictionary: dictionary)
+        XCTAssert((newIndividual?.employee) == (dictionary["employee"] as? Bool))
+        XCTAssert((newIndividual?.email) == (dictionary["email"] as? String))
+        XCTAssert((newIndividual?.lastName) == (dictionary["lastName"] as? String))
+        XCTAssert((newIndividual?.firstName) == (dictionary["firstName"] as? String))
+        
+        let actual: [BankAccount] = newIndividual?.accounts ?? []
+        let expected: [BankAccount] = [account1, account2]
+        
+        
+        XCTAssert(actual[0] == expected[0])
+        XCTAssert(actual[1] == expected[1])
+    }
+    
+    //Mark: Bank Tests
+    
     func testbankAccountTotal(){
         let account1 = SavingsAccount(balance: 100, accountID: 0, accountType: .saving, transactionList: [])
         let account2 = CheckingAccount(balance: 5, accountID: 1, accountType: .checking, transactionList: [])
@@ -234,37 +336,96 @@ class BankModelTests: XCTestCase {
         }
     }
     
+    
+    
+    
+    func testToFromJSON1(){
+        let defaultDate = Date()
+        let x = defaultDate.toString()
+        let y = (try? x.toDate()) ?? Date()
+        let moveMoney = Transaction(amount: 45, operation: .withdraw, vendorName: "firstBank", datePosted: y, dateCreated: y, memo: "money")
+        let moveMoney1 = Transaction(amount: 50, operation: .deposit, vendorName: "firstBank", datePosted: y, dateCreated: y, memo: "money")
+        let account1 = CheckingAccount(balance: 5, accountID: 1, accountType: .checking, transactionList: [moveMoney, moveMoney1])
+        let bob = Individual(firstName: "bob", lastName: "smith", email: "b@s.com", isEmploy: true, accounts: [account1])
+        let firstBank = Bank(address: "here")
+        firstBank.employees = [bob]
+        firstBank.addNewCustomer(new: bob)
+        do{
+            let data = try firstBank.toJSON()
+            let newBank = Bank(json: data)
+            XCTAssertEqual(newBank?.address, firstBank.address)
+            XCTAssertEqual(newBank?.employees[0], firstBank.employees[0])
+            
+        } catch {
+            XCTAssert(false)
+        }
+    }
+    
+    func testToFromJSON2(){ // need to "break apart bank to test!
+        let account1 = CheckingAccount(balance: 5, accountID: 1, accountType: .checking, transactionList: [])
+        let bob = Individual(firstName: "bob", lastName: "smith", email: "b@s.com", isEmploy: true, accounts: [account1])
+        let firstBank = Bank(address: "here")
+        firstBank.employees = [bob]
+        firstBank.addNewCustomer(new: bob)
+        do{
+            let data = try firstBank.toJSON()
+            let newBank = Bank(json: data)
+            XCTAssertEqual((newBank!.address), (firstBank.address))
+        } catch {
+            XCTAssert(false)
+        }
+    }
+    
+    func testToFromJSON3(){
+        let bob = Individual(firstName: "bob", lastName: "smith", email: "b@s.com", isEmploy: true, accounts: [])
+        let firstBank = Bank(address: "here")
+        firstBank.employees = [bob]
+        firstBank.addNewCustomer(new: bob)
+        do{
+            let data = try firstBank.toJSON()
+            let newBank = Bank(json: data)
+            XCTAssert(newBank == firstBank)
+        } catch {
+            XCTAssert(false)
+        }
+    }
+    
     //Mark: Transaction Tests
     
     func testTransactionToDictionary(){
-        let defaultDate = Date()
-        let defaultDate2 = Date()
-        let moveMoney = Transaction(amount: 45, operation: .withdraw, vendorName: "firstBank", datePosted: defaultDate, dateCreated: defaultDate2, memo: "money")
+        let expectedDatePostedText = "2016-12-22T23:59:40Z"
+        let expecteddateCreatedText = "2016-12-22T22:59:40Z"
+        let expectedDatePosted = (try? expectedDatePostedText.toDate()) ?? Date()
+        let expectedDateCreated = (try? expecteddateCreatedText.toDate()) ?? Date()
+        let moveMoney = Transaction(amount: 45, operation: .withdraw, vendorName: "firstBank", datePosted: expectedDatePosted, dateCreated: expectedDateCreated, memo: "money")
         let result = moveMoney.toDictionary()
-        let _: [String: Any] = [
-            "amount": Double(45),
-            "operation": -1,
-            "vendorName": "firstBank",
-            "datePosted": defaultDate,
-            "dateCreated": defaultDate2,
-            "memo": "money"]
-        let resultAmount: Double = result["amount"] as! Double
-        let resultOperation: Int = result["operation"] as! Int
-        let resultVendorName: String = result["vendorName"] as! String
-        let resultDatePosted: Date = result["datePosted"] as! Date
-        let resultDateCreated: Date = result["dateCreated"] as! Date
-        let resultMemo: String = result["memo"] as! String // not sure the best way to do this testing nil
+        let resultAmount: Double = result["amount"] as? Double ?? 0.0
+        let resultOperation: Int = result["operation"] as? Int ?? 0
+        let resultVendorName: String = result["vendorName"] as? String ?? ""
+        let resultDatePosted: String = result["datePosted"] as? String ?? ""
+        let resultDateCreated: String = result["dateCreated"] as? String ?? ""
+        let resultMemo: String = result["memo"] as? String ?? ""
         XCTAssertEqual(resultAmount, Double(45))
         XCTAssertEqual(resultOperation, -1)
         XCTAssertEqual(resultVendorName, "firstBank")
-        XCTAssertEqual(resultDatePosted, defaultDate)
-        XCTAssertEqual(resultDateCreated, defaultDate2)
+        XCTAssertEqual(resultDatePosted,  expectedDatePostedText)
+        XCTAssertEqual(resultDateCreated, expecteddateCreatedText)
         XCTAssertEqual(resultMemo, "money")
+    }
+    
+    
+    //MARK: dates
+    
+    func testDateToAndFromString(){
+        let x = (try? "2016-12-22T22:59:40Z".toDate()) ?? Date()
+        let firstResult = x.toString()
+        let secondResult = (try? firstResult.toDate()) ?? Date()
+        XCTAssertEqual(x, secondResult)
     }
     
     //Mark: JSON Tests
     
-    func TestJsonForAll(){
+    func testJsonForAll(){
         let defaultDate = Date()
         let defaultDate2 = Date()
         let moveMoney = Transaction(amount: 45, operation: .withdraw, vendorName: "firstBank", datePosted: defaultDate, dateCreated: defaultDate2, memo: "money")
@@ -282,18 +443,12 @@ class BankModelTests: XCTestCase {
             XCTAssert(false)
         }
     }
+
     
-    func TestJsonForAll2(){
-        let defaultDate = Date()
-        let defaultDate2 = Date()
-        let moveMoney = Transaction(amount: 45, operation: .withdraw, vendorName: "firstBank", datePosted: defaultDate, dateCreated: defaultDate2, memo: "money")
-        let moveMoney1 = Transaction(amount: 50, operation: .deposit, vendorName: "firstBank", datePosted: defaultDate, dateCreated: defaultDate2, memo: "money")
-        let account1 = CheckingAccount(balance: 5, accountID: 1, accountType: .checking, transactionList: [moveMoney, moveMoney1])
+    func testJsonForSome(){
+        let account1 = CheckingAccount(balance: 5, accountID: 1, accountType: .checking, transactionList: [])
         let bob = Individual(firstName: "bob", lastName: "smith", email: "b@s.com", isEmploy: true, accounts: [account1])
-        
-        let moveMoney2 = Transaction(amount: 45, operation: .deposit, vendorName: "firstBank", datePosted: defaultDate, dateCreated: defaultDate2, memo: nil)
-        let moveMoney3 = Transaction(amount: 50, operation: .deposit, vendorName: "firstBank", datePosted: defaultDate, dateCreated: defaultDate2, memo: "money")
-        let account2 = CheckingAccount(balance: 5, accountID: 2, accountType: .checking, transactionList: [moveMoney2, moveMoney3])
+        let account2 = CheckingAccount(balance: 5, accountID: 2, accountType: .checking, transactionList: [])
         let linda = Individual(firstName: "Linda", lastName: "smith", email: "l@s.com", isEmploy: false, accounts: [account2])
         
         let firstBank = Bank(address: "here")
@@ -302,8 +457,9 @@ class BankModelTests: XCTestCase {
         firstBank.addNewCustomer(new: linda)
         do{
             let data = try firstBank.toJSON()
-            let newBank = Bank(json: data)
-            XCTAssert(newBank == firstBank)
+            if let newBank: Bank = Bank(json: data) {
+                XCTAssert(newBank == firstBank)
+            }
         } catch {
             XCTAssert(false)
         }

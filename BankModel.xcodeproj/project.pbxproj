@@ -13,6 +13,7 @@
 		E10FEF391E09B633002C4004 /* BankModel.h in Headers */ = {isa = PBXBuildFile; fileRef = E10FEF2B1E09B633002C4004 /* BankModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E10FEF431E09B64E002C4004 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10FEF421E09B64E002C4004 /* Person.swift */; };
 		E10FEF451E09B92A002C4004 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10FEF441E09B92A002C4004 /* Account.swift */; };
+		E1A0068F1E0CD3B5009AEDFB /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A0068E1E0CD3B5009AEDFB /* Util.swift */; };
 		E1CDC98C1E09CBB800B9AF18 /* Bank.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CDC98B1E09CBB800B9AF18 /* Bank.swift */; };
 		E1CDC9941E0A29AD00B9AF18 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CDC9931E0A29AD00B9AF18 /* main.swift */; };
 		E1CDC99A1E0A2A5A00B9AF18 /* BankModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E10FEF281E09B633002C4004 /* BankModel.framework */; };
@@ -57,6 +58,7 @@
 		E10FEF381E09B633002C4004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E10FEF421E09B64E002C4004 /* Person.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		E10FEF441E09B92A002C4004 /* Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		E1A0068E1E0CD3B5009AEDFB /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		E1CDC98B1E09CBB800B9AF18 /* Bank.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bank.swift; sourceTree = "<group>"; };
 		E1CDC9911E0A29AD00B9AF18 /* BankDriver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BankDriver; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1CDC9931E0A29AD00B9AF18 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				E10FEF441E09B92A002C4004 /* Account.swift */,
 				E102EE071E0B0F5700267FA1 /* Transaction.swift */,
 				E10FEF421E09B64E002C4004 /* Person.swift */,
+				E1A0068E1E0CD3B5009AEDFB /* Util.swift */,
 			);
 			path = BankModel;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 			files = (
 				E1CDC98C1E09CBB800B9AF18 /* Bank.swift in Sources */,
 				E10FEF431E09B64E002C4004 /* Person.swift in Sources */,
+				E1A0068F1E0CD3B5009AEDFB /* Util.swift in Sources */,
 				E102EE081E0B0F5700267FA1 /* Transaction.swift in Sources */,
 				E10FEF451E09B92A002C4004 /* Account.swift in Sources */,
 			);

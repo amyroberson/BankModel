@@ -8,9 +8,9 @@
 
 import Foundation
 
-enum AccountType: Int{
-    case saving = 0
-    case checking = 1
+enum AccountType: String {
+    case saving = "savings"
+    case checking = "checking"
     
 }
 
@@ -34,10 +34,13 @@ class BankAccount: Equatable{
     }
     
     init?(dictionary: [String: Any]){
-        self.balance = dictionary["balance"] as? Double ?? 0.0
+        guard let balance = dictionary["balance"] as? Double else { return nil }
+        self.balance = balance
         guard let x = dictionary["accountID"] as? Int else { return nil }
         self.accountID = x
-        self.accountType = dictionary["accountType"] as? AccountType ?? .saving
+        guard let accountTypeText = dictionary["accountType"] as? String else {  return nil }
+        guard let accountType =  AccountType(rawValue: accountTypeText) else { return nil }
+        self.accountType = accountType
         if let tmp = dictionary["transactionList"] as? [[String:Any]] {
             self.transactionList = []
             for dictionary in tmp {
@@ -68,7 +71,7 @@ class BankAccount: Equatable{
         self.balance += amount
     }
     
-    static func ==(_ lhs: BankAccount, _ rhs: BankAccount) -> Bool {
+    static func == (_ lhs: BankAccount, _ rhs: BankAccount) -> Bool {
         return lhs.balance == rhs.balance &&
         lhs.accountID == rhs.accountID &&
         lhs.accountType == rhs.accountType
@@ -78,7 +81,7 @@ class BankAccount: Equatable{
         let dictionary: [String: Any] = [
             "balance" : self.balance,
             "accountID": self.accountID,
-            "accountType": self.accountType,
+            "accountType": self.accountType.rawValue,
             "transactionList": self.transactionList.map{ $0.toDictionary() }
         ]
         return dictionary
